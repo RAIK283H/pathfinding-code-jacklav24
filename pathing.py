@@ -16,7 +16,31 @@ def get_test_path():
 
 
 def get_random_path():
-    return [1,2]
+    path = []
+    assert path == []
+    def random_walk(current, end):
+        if (current == end):
+                return [current]
+        else:
+            # Access the current node's neighbors
+            node = graph_data.graph_data[global_game_data.current_graph_index][current]
+            neighbors = node[1]
+            next_node = random.choice(neighbors)
+            # Recursively walk to the end
+            path = [current] + random_walk(next_node, end)  # Concatenate lists
+            
+        return path
+    
+    target = global_game_data.target_node[global_game_data.current_graph_index]
+    end = len(graph_data.graph_data[global_game_data.current_graph_index]) - 1
+
+    # Random walk from start to target and target to end
+    start_to_target = random_walk(0, target)
+    target_to_end = random_walk(target, end)
+
+    path = start_to_target + target_to_end[1:] 
+    assert (path[0] == 0) & (path[-1] == end)
+    return path[1:]
 
 
 def get_dfs_path():

@@ -11,7 +11,8 @@ class Scoreboard:
     player_traveled_display = []
     player_excess_distance_display = []
     player_path_display = []
-
+    player_location_display = []
+    
     def __init__(self, batch, group):
         self.batch = batch
         self.group = group
@@ -37,12 +38,20 @@ class Scoreboard:
                                                         font_size=self.font_size, batch=batch, group=group, color=player[2][colors.TEXT_INDEX])
             self.player_traveled_display.append(
                 (traveled_distance_label, player))
+            
+            player_location_label = pyglet.text.Label("Location:",
+                                                        x=0,
+                                                        y=0,
+                                                        font_name='Arial',
+                                                        font_size=self.font_size, batch=batch, group=group, color=player[2][colors.TEXT_INDEX])
+            self.player_location_display.append(
+                (player_location_label, player))
+            
             excess_distance_label = pyglet.text.Label("Excess Distance Traveled:",
                                                       x=0,
                                                       y=0,
                                                       font_name='Arial',
                                                       font_size=self.font_size, batch=batch, group=group, color=player[2][colors.TEXT_INDEX])
-
             self.player_excess_distance_display.append(
                 (excess_distance_label, player))
             path_label = pyglet.text.Label("",
@@ -55,19 +64,22 @@ class Scoreboard:
 
     def update_elements_locations(self):
         self.distance_to_exit_label.x = config_data.window_width - self.stat_width
-        self.distance_to_exit_label.y = config_data.window_height - self.stat_height;
+        self.distance_to_exit_label.y = config_data.window_height - self.stat_height
         for index, (display_element, player) in enumerate(self.player_name_display):
             display_element.x = config_data.window_width - self.stat_width
             display_element.y = config_data.window_height - self.base_height_offset - self.stat_height * 2 - self.stat_height * (index * self.number_of_stats)
-        for index, (display_element, player) in enumerate(self.player_traveled_display):
+        for index, (display_element, player) in enumerate(self.player_location_display):
             display_element.x = config_data.window_width - self.stat_width
             display_element.y = config_data.window_height - self.base_height_offset - self.stat_height * 3 - self.stat_height * (index * self.number_of_stats)
-        for index, (display_element, player) in enumerate(self.player_excess_distance_display):
+        for index, (display_element, player) in enumerate(self.player_traveled_display):
             display_element.x = config_data.window_width - self.stat_width
             display_element.y = config_data.window_height - self.base_height_offset - self.stat_height * 4 - self.stat_height * (index * self.number_of_stats)
-        for index, (display_element, player) in enumerate(self.player_path_display):
+        for index, (display_element, player) in enumerate(self.player_excess_distance_display):
             display_element.x = config_data.window_width - self.stat_width
             display_element.y = config_data.window_height - self.base_height_offset - self.stat_height * 5 - self.stat_height * (index * self.number_of_stats)
+        for index, (display_element, player) in enumerate(self.player_path_display):
+            display_element.x = config_data.window_width - self.stat_width
+            display_element.y = config_data.window_height - self.base_height_offset - self.stat_height * 6 - self.stat_height * (index * self.number_of_stats)
 
     def update_paths(self):
         for index in range(len(config_data.player_data)):
@@ -85,6 +97,12 @@ class Scoreboard:
         wrapped_text = (input[:44] + ', ...]') if len(input) > 44 else input
         return wrapped_text
 
+    def update_location(self):
+        for display_element, player_configuration_info in self.player_location_display:
+            for player_object in global_game_data.player_objects:
+                if player_object.player_config_data == player_configuration_info:
+                    display_element.text = "Player Location (x,y) : (" + str(int(player_object.absolute_x)) + "," + str(int(player_object.absolute_y)) + ")"
+
     def update_distance_traveled(self):
         for display_element, player_configuration_info in self.player_traveled_display:
             for player_object in global_game_data.player_objects:
@@ -100,4 +118,5 @@ class Scoreboard:
         self.update_elements_locations()
         self.update_paths()
         self.update_distance_to_exit()
+        self.update_location()
         self.update_distance_traveled()
