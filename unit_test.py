@@ -3,6 +3,7 @@ import unittest
 import graph_data
 import global_game_data
 import pathing
+import permutation
 class TestPathFinding(unittest.TestCase):
 
     def test_upper(self):
@@ -49,6 +50,26 @@ class TestPathFinding(unittest.TestCase):
         global_game_data.current_graph_index = 3
         path = pathing.get_bfs_path()
         self.assertEqual(path, [1,2,6,7,11,15])
-        
+
+    def test_sjt_permutations(self):
+        perms = list(permutation.perm(3))
+        expected = [[1, 2, 3], [1, 3, 2], [3, 1, 2], [3, 2, 1], [2, 3, 1]]
+        self.assertEqual(perms, expected)
+
+    def test_hamiltonian_cycle_detection(self):
+        graph = [
+            [(0,0), [1,2]],
+            [(0,200), [0,3]],
+            [(200,200), [0,3]],
+            [(200,0), [1,2]]
+        ]
+        self.assertEqual(permutation.find_h_cycle(graph), -1)
+
+    def test_valid_hamiltonian_cycle(self):
+        graph = graph_data.graph_data[0]
+        cycle = [1]
+        self.assertTrue(permutation.is_valid_h_cycle(graph, cycle))
+
+
 if __name__ == '__main__':
     unittest.main()
