@@ -4,6 +4,7 @@ import graph_data
 import global_game_data
 import pathing
 import permutation
+
 class TestPathFinding(unittest.TestCase):
 
     def test_upper(self):
@@ -24,6 +25,7 @@ class TestPathFinding(unittest.TestCase):
         self.assertAlmostEqual(first=first_value,second=second_value,delta=1e-9)
         self.assertNotEqual(almost_pi, pi)
         self.assertAlmostEqual(first=almost_pi, second=pi, delta=1e-1)
+        
     def setUp(self):
         # Set up a sample graph for testing
         self.original_graph_data = graph_data.graph_data
@@ -69,6 +71,15 @@ class TestPathFinding(unittest.TestCase):
         graph = graph_data.graph_data[0]
         cycle = [1]
         self.assertTrue(permutation.is_valid_h_cycle(graph, cycle))
+
+    def test_dijkstra_path(self):
+        # Test dijkstra from start to target
+        global_game_data.current_graph_index = 0
+        path = pathing.get_dijkstra_path()
+        self.assertEqual(path, [1, 2])  
+        global_game_data.current_graph_index = 3
+        path = pathing.get_dijkstra_path()
+        self.assertEqual(path, [1,2,6,7,11,15])
 
 
 if __name__ == '__main__':

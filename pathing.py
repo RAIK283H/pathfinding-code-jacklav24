@@ -125,4 +125,43 @@ def bfs(start, end):
 
 
 def get_dijkstra_path():
-    return [1,2]
+    graph = graph_data.graph_data[global_game_data.current_graph_index]
+    target = global_game_data.target_node[global_game_data.current_graph_index]
+    end = len(graph_data.graph_data[global_game_data.current_graph_index]) - 1
+
+    start_to_target = dijkstra(0, target)
+    target_to_end = dijkstra(target, end)
+    path = start_to_target + target_to_end[1:]
+
+    for i in range(len(start_to_target) - 1):
+        assert(start_to_target[i + 1] in graph[start_to_target[i]][1])
+    for i in range(len(target_to_end) - 1):
+        assert(target_to_end[i + 1] in graph[target_to_end[i]][1])
+    assert (path[0] == 0) & (path[-1] == end)
+    assert target in path
+
+    return path[1:] 
+def dijkstra(start, end):
+    visited = set()
+    costs = {start: 0}
+    parent = {start: None}
+    
+    while costs:
+        current = min((node for node in costs if node not in visited))
+        if current is None or current == end:
+            break
+        visited.add(current)
+        node = graph_data.graph_data[global_game_data.current_graph_index][current]
+        neighbors = node[1]
+        for next_node in neighbors:
+            new_cost = costs[current] + 1
+            if next_node not in costs or new_cost < costs[next_node]:
+                costs[next_node]=new_cost 
+                parent[next_node] = current  
+    if current == end:
+        path = []
+        while current is not None:
+            path.append(current)
+            current = parent[current]
+        return path[::-1]
+    return None  # return None if no path is found
